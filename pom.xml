@@ -56,5 +56,11 @@
             </exclusions>
         </dependency>
         <!-- LOGGING end -->
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.5.0</version>
+        </dependency>
     </dependencies>
 </project>
