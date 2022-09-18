@@ -1,8 +1,9 @@
-package com.lee.mybatis.session.impl;
+package mybatis.session.impl;
 
-import com.lee.mybatis.binding.MapperRegistry;
-import com.lee.mybatis.session.SqlSession;
-import com.lee.mybatis.session.SqlSessionFactory;
+
+import mybatis.binding.MapperRegistry;
+import mybatis.session.SqlSession;
+import mybatis.session.SqlSessionFactory;
 
 /**
  * @Description sqlSession创建工厂，默认实现

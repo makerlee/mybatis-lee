@@ -1,9 +1,9 @@
-package com.lee.mybatis.binding;
+package mybatis.binding;
 
-import com.lee.mybatis.session.SqlSession;
+
+import mybatis.session.SqlSession;
 
 import java.lang.reflect.Proxy;
-import java.util.Map;
 
 /**
  * @Description mapper代理类工厂

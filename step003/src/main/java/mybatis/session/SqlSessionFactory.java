@@ -1,4 +1,4 @@
-package com.lee.mybatis.session;
+package mybatis.session;
 
 /**
  * sqlSession创建工厂

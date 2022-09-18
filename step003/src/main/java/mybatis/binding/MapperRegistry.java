@@ -1,7 +1,7 @@
-package com.lee.mybatis.binding;
+package mybatis.binding;
 
 import cn.hutool.core.lang.ClassScanner;
-import com.lee.mybatis.session.SqlSession;
+import mybatis.session.SqlSession;
 
 import java.util.HashMap;
 import java.util.Map;

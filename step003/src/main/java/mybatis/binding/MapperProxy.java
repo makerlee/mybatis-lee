@@ -1,11 +1,11 @@
-package com.lee.mybatis.binding;
+package mybatis.binding;
 
-import com.lee.mybatis.session.SqlSession;
+
+import mybatis.session.SqlSession;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Map;
 
 /**
  * @Description mapper代理类

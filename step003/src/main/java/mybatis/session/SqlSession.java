@@ -1,4 +1,4 @@
-package com.lee.mybatis.session;
+package mybatis.session;
 
 /**
  * @Description 用来执行SQL；获取mapper interface对应的代理对象(MapperProxy)
