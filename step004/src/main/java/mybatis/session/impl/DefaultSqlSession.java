@@ -1,7 +1,7 @@
 package mybatis.session.impl;
 
-
-import mybatis.binding.MapperRegistry;
+import mybatis.mapping.MappedStatement;
+import mybatis.session.Configuration;
 import mybatis.session.SqlSession;
 
 /**
@@ -11,24 +11,31 @@ import mybatis.session.SqlSession;
  **/
 public class DefaultSqlSession implements SqlSession {
 
-    private MapperRegistry mapperRegistry;
+	private Configuration configuration;
 
-    public DefaultSqlSession(MapperRegistry mapperRegistry) {
-        this.mapperRegistry = mapperRegistry;
-    }
+	public DefaultSqlSession(Configuration configuration) {
+		this.configuration = configuration;
+	}
 
-    @Override
-    public <T> T selectOne(String statementId) {
-        return (T) ("代理:" + statementId);
-    }
+	@Override
+	public <T> T selectOne(String statementId) {
+		return (T) ("代理:" + statementId);
+	}
 
-    @Override
-    public <T> T selectOne(String statementId, Object parameter) {
-        return (T) ("代理:" + statementId + ",参数:" + parameter);
-    }
+	@Override
+	public <T> T selectOne(String statementId, Object parameter) {
+		MappedStatement statement = configuration.getStatement(statementId);
 
-    @Override
-    public <T> T getMapper(Class<T> type) {
-        return mapperRegistry.getMapper(type, this);
-    }
+		return (T) ("代理:" + statement.getId() + ",参数:" + parameter + ",sql:" + statement.getSql());
+	}
+
+	@Override
+	public <T> T getMapper(Class<T> type) {
+		return configuration.getMapper(type, this);
+	}
+
+	@Override
+	public Configuration getConfiguration() {
+		return configuration;
+	}
 }

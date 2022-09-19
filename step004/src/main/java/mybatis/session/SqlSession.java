@@ -33,4 +33,10 @@ public interface SqlSession {
      * @return a mapper bound to this SqlSession
      */
     <T> T getMapper(Class<T> type);
+
+    /**
+     * 获取配置
+     * @return configuration
+     */
+    Configuration getConfiguration();
 }
