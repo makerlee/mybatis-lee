@@ -1,6 +1,7 @@
 package mybatis.builder;
 
 import mybatis.session.Configuration;
+import mybatis.TypeAliasRegistry;
 
 /**
  * @Description 建造者
@@ -8,13 +9,15 @@ import mybatis.session.Configuration;
  * @Date 2022/9/19 09:13
  **/
 public class BaseBuilder {
-    protected final Configuration configuration;
+	protected final Configuration configuration;
+	protected final TypeAliasRegistry typeAliasRegistry;
 
-    public BaseBuilder(Configuration configuration) {
-        this.configuration = configuration;
-    }
+	public BaseBuilder(Configuration configuration) {
+		this.configuration = configuration;
+		this.typeAliasRegistry = this.configuration.getTypeAliasRegistry();
+	}
 
-    public Configuration getConfiguration() {
-        return configuration;
-    }
+	public Configuration getConfiguration() {
+		return configuration;
+	}
 }

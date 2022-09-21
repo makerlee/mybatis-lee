@@ -1,7 +1,5 @@
 package mybatis.mapping;
 
-import java.util.Map;
-
 import mybatis.session.Configuration;
 
 /**
@@ -14,10 +12,7 @@ public class MappedStatement {
 	private String id;
 	private SqlCommandType sqlCommandType;
 
-	private String parameterType;
-	private String resultType;
-	private String sql;
-	private Map<Integer, String> parameter;
+	private BoundSql boundSql;
 
 	// disable
 	MappedStatement() {
@@ -26,20 +21,16 @@ public class MappedStatement {
 	public static class Builder {
 		private MappedStatement statement = new MappedStatement();
 
-		public Builder(Configuration configuration, String id, SqlCommandType commandType, String parameterType,
-				String resultType, String sql, Map<Integer, String> parameter) {
-            statement.configuration = configuration;
-            statement.id = id;
-            statement.sqlCommandType = commandType;
-            statement.parameterType = parameterType;
-            statement.resultType = resultType;
-            statement.sql = sql;
-            statement.parameter = parameter;
+		public Builder(Configuration configuration, String id, SqlCommandType commandType, BoundSql boundSql) {
+			statement.configuration = configuration;
+			statement.id = id;
+			statement.sqlCommandType = commandType;
+			statement.boundSql = boundSql;
 		}
 
 		public MappedStatement build() {
-		    assert statement.configuration != null;
-		    assert statement.id != null;
+			assert statement.configuration != null;
+			assert statement.id != null;
 			return statement;
 		}
 	}
@@ -48,55 +39,15 @@ public class MappedStatement {
 		return configuration;
 	}
 
-	public void setConfiguration(Configuration configuration) {
-		this.configuration = configuration;
-	}
-
 	public String getId() {
 		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public SqlCommandType getSqlCommandType() {
 		return sqlCommandType;
 	}
 
-	public void setSqlCommandType(SqlCommandType sqlCommandType) {
-		this.sqlCommandType = sqlCommandType;
-	}
-
-	public String getParameterType() {
-		return parameterType;
-	}
-
-	public void setParameterType(String parameterType) {
-		this.parameterType = parameterType;
-	}
-
-	public String getResultType() {
-		return resultType;
-	}
-
-	public void setResultType(String resultType) {
-		this.resultType = resultType;
-	}
-
-	public String getSql() {
-		return sql;
-	}
-
-	public void setSql(String sql) {
-		this.sql = sql;
-	}
-
-	public Map<Integer, String> getParameter() {
-		return parameter;
-	}
-
-	public void setParameter(Map<Integer, String> parameter) {
-		this.parameter = parameter;
+	public BoundSql getBoundSql() {
+		return boundSql;
 	}
 }

@@ -2,12 +2,11 @@ package mybatis.builder.xml;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.sql.DataSource;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -16,10 +15,14 @@ import org.dom4j.io.SAXReader;
 import org.xml.sax.InputSource;
 
 import mybatis.builder.BaseBuilder;
+import mybatis.datasource.DataSourceFactory;
 import mybatis.io.Resources;
+import mybatis.mapping.BoundSql;
+import mybatis.mapping.Environment;
 import mybatis.mapping.MappedStatement;
 import mybatis.mapping.SqlCommandType;
 import mybatis.session.Configuration;
+import mybatis.transaction.TransactionFactory;
 
 /**
  * @Description xml格式配置建造器
@@ -45,11 +48,56 @@ public class XmlConfigBuilder extends BaseBuilder {
 
 	public Configuration parse() {
 		try {
+			// 解析environment
+			environmentsElement(root.element("environments"));
+
+			// 解析mapper
 			mapperElement(root.element("mappers"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return configuration;
+	}
+
+	/**
+	 * <environments default="development"> <environment id="development">
+	 * <transactionManager type="JDBC"> <property name="自定义属性" value="自定义value"/>
+	 * </transactionManager> <dataSource type="POOLED">
+	 * <property name="driver" value="${driver}"/>
+	 * <property name="url" value="${url}"/>
+	 * <property name="username" value="${username}"/>
+	 * <property name="password" value="${password}"/> </dataSource> </environment>
+	 * </environments>
+	 */
+	private void environmentsElement(Element environments) throws Exception {
+		String defaultEnv = environments.attributeValue("default");
+		List<Element> environmentNode = environments.elements("environment");
+		for (Element env : environmentNode) {
+			String id = env.attributeValue("id");
+			if (!id.equals(defaultEnv)) {
+				continue;
+			}
+			String transManagerName = env.element("transactionManager").attributeValue("type");
+			TransactionFactory transactionFactory = (TransactionFactory) typeAliasRegistry
+					.resolveAlia(transManagerName.toUpperCase(Locale.ENGLISH)).newInstance();
+
+			Element dsNode = env.element("dataSource");
+			DataSourceFactory dataSourceFactory = (DataSourceFactory) typeAliasRegistry
+					.resolveAlia(dsNode.attributeValue("type")).newInstance();
+			List<Element> propertyNodes = dsNode.elements("property");
+			Properties dsProps = new Properties();
+			for (Element element : propertyNodes) {
+				dsProps.put(element.attributeValue("name"), element.attributeValue("value"));
+			}
+			dataSourceFactory.setProperties(dsProps);
+			DataSource dataSource = dataSourceFactory.getDataSource();
+
+			// 构建环境
+			Environment environment = new Environment.Builder(defaultEnv).transactionFactory(transactionFactory)
+					.dataSource(dataSource).build();
+
+			configuration.setEnvironment(environment);
+		}
 	}
 
 	private void mapperElement(Element mappers) throws IOException, DocumentException, ClassNotFoundException {
@@ -84,8 +132,11 @@ public class XmlConfigBuilder extends BaseBuilder {
 				String msId = namespace + "." + id;
 				SqlCommandType sqlCommandType = SqlCommandType
 						.valueOf(selectNode.getName().toUpperCase(Locale.ENGLISH));
+
+				BoundSql boundSql = new BoundSql(sql, parameter, parameterType, resultType);
+
 				MappedStatement mappedStatement = new MappedStatement.Builder(configuration, msId, sqlCommandType,
-						parameterType, resultType, sql, parameter).build();
+						boundSql).build();
 
 				configuration.addMappedStatement(mappedStatement);
 			}
