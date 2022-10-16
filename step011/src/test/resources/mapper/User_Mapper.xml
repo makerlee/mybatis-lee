@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.mapper.IUserMapper">
+
+    <select id="queryUserInfoById" parameterType="java.lang.Integer" resultType="mybatis.po.User">
+        SELECT id, userId, userName, userHead
+        FROM t_user
+        where id = #{id, javaType = int}
+    </select>
+
+
+    <select id="queryUserInfo" parameterType="mybatis.po.User" resultType="mybatis.po.User">
+        SELECT id, userId, userName, userHead
+        FROM t_user
+        where id = #{id} and userId = #{userId}
+    </select>
+</mapper>
