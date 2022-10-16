@@ -24,14 +24,15 @@ public class DefaultSqlSession implements SqlSession {
 
 	@Override
 	public <T> T selectOne(String statementId) {
-		return (T) ("代理:" + statementId);
+		return this.selectOne(statementId, null);
 	}
 
 	@Override
 	public <T> T selectOne(String statementId, Object parameter) {
 		try {
 			MappedStatement ms = configuration.getStatement(statementId);
-			List<T> result = executor.query(ms, parameter, Executor.NO_RESULT_HANDLER, ms.getBoundSql());
+			List<T> result = executor.query(ms, parameter, Executor.NO_RESULT_HANDLER,
+					ms.getSqlSource().getBoundSql(parameter));
 			return result.get(0);
 		} catch (Exception e) {
 			e.printStackTrace();

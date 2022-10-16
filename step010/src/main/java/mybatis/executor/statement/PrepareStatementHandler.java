@@ -31,8 +31,9 @@ public class PrepareStatementHandler extends BaseStatementHandler {
 
 	@Override
 	public void parameterize(Statement statement) throws SQLException {
-		PreparedStatement ps = (PreparedStatement) statement;
-		ps.setLong(1, Long.parseLong(((Object[]) paramObject)[0].toString()));
+		// PreparedStatement ps = (PreparedStatement) statement;
+		// ps.setLong(1, Long.parseLong(((Object[]) paramObject)[0].toString()));
+		parameterHandler.setParameters((PreparedStatement) statement);
 	}
 
 	@Override

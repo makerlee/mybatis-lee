@@ -190,7 +190,7 @@ public class PooledDataSource implements DataSource {
 	public void forceCloseAll() {
 		synchronized (state) {
 			expectedConnectionTypeCode = assembleConnectionTypeCode(unPooledDataSource.getUrl(),
-					unPooledDataSource.getUsername(), unPooledDataSource.getPasswd());
+					unPooledDataSource.getUsername(), unPooledDataSource.getPassword());
 			for (int i = state.activeConnections.size(); i > 0; i--) {
 				try {
 					PooledConnection connection = state.activeConnections.remove(i - 1);
@@ -227,7 +227,7 @@ public class PooledDataSource implements DataSource {
 
 	@Override
 	public Connection getConnection() throws SQLException {
-		return popConnection(unPooledDataSource.getUsername(), unPooledDataSource.getPasswd()).getProxyConnection();
+		return popConnection(unPooledDataSource.getUsername(), unPooledDataSource.getPassword()).getProxyConnection();
 	}
 
 	@Override
@@ -333,8 +333,24 @@ public class PooledDataSource implements DataSource {
 	}
 
 	public void setPassword(String password) {
-		unPooledDataSource.setPasswd(password);
+		unPooledDataSource.setPassword(password);
 		forceCloseAll();
+	}
+
+	public String getDriver() {
+		return unPooledDataSource.getDriver();
+	}
+
+	public String getUrl() {
+		return unPooledDataSource.getUrl();
+	}
+
+	public String getUsername() {
+		return unPooledDataSource.getUsername();
+	}
+
+	public String getPassword() {
+		return unPooledDataSource.getPassword();
 	}
 
 

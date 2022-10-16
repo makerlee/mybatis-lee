@@ -11,6 +11,7 @@ import mybatis.datasource.pooled.PooledDataSourceFactory;
 import mybatis.datasource.unpooled.UnPooledDataSourceFactory;
 import mybatis.executor.Executor;
 import mybatis.executor.SimpleExecutor;
+import mybatis.executor.parameter.ParameterHandler;
 import mybatis.executor.resultset.DefaultResultSetHandler;
 import mybatis.executor.resultset.ResultSetHandler;
 import mybatis.executor.statement.PrepareStatementHandler;
@@ -23,11 +24,13 @@ import mybatis.reflection.factory.DefaultObjectFactory;
 import mybatis.reflection.factory.ObjectFactory;
 import mybatis.reflection.wrapper.DefaultObjectWrapperFactory;
 import mybatis.reflection.wrapper.ObjectWrapperFactory;
+import mybatis.scripting.LanguageDriver;
 import mybatis.scripting.LanguageDriverRegistry;
 import mybatis.scripting.xmltags.XMLLanguageDriver;
 import mybatis.transaction.Transaction;
 import mybatis.transaction.jdbc.JdbcTransactionFactory;
 import mybatis.type.TypeAliasRegistry;
+import mybatis.type.TypeHandlerRegistry;
 
 /**
  * @Description 贯穿整个mybatis生命周期的配置
@@ -47,6 +50,9 @@ public class Configuration {
 	// 类型别名注册器
 	protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
 	protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
+
+	// 类型处理器注册机
+	protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
 
 	// 对象工厂、对象包装器工厂
 	protected ObjectFactory objectFactory = new DefaultObjectFactory();
@@ -141,5 +147,20 @@ public class Configuration {
 
 	public Object getDatabaseId() {
 		return databaseId;
+	}
+
+	public TypeHandlerRegistry getTypeHandlerRegistry() {
+		return typeHandlerRegistry;
+	}
+
+	public ParameterHandler newParameterHandler(MappedStatement ms, Object paramObject, BoundSql boundSql) {
+		ParameterHandler parameterHandler = ms.getLang().createParameterHandler(ms, paramObject, boundSql);
+		// 插件的一些参数也在这里 暂不实现
+
+		return parameterHandler;
+	}
+
+	public LanguageDriver getDefaultScriptingLangInstance() {
+		return languageRegistry.getDefaultDriver();
 	}
 }

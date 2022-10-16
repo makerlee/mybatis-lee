@@ -1,5 +1,6 @@
 package mybatis.mapping;
 
+import mybatis.scripting.LanguageDriver;
 import mybatis.session.Configuration;
 
 /**
@@ -13,6 +14,7 @@ public class MappedStatement {
 	private SqlCommandType sqlCommandType;
 	private SqlSource sqlSource;
 	Class<?> resultType;
+	private LanguageDriver lang;
 
 	// disable
 	MappedStatement() {
@@ -28,6 +30,7 @@ public class MappedStatement {
 			statement.sqlCommandType = commandType;
 			statement.sqlSource = sqlSource;
 			statement.resultType = resultType;
+			statement.lang = configuration.getDefaultScriptingLangInstance();
 		}
 
 		public MappedStatement build() {
@@ -55,5 +58,9 @@ public class MappedStatement {
 
 	public Class<?> getResultType() {
 		return resultType;
+	}
+
+	public LanguageDriver getLang() {
+		return lang;
 	}
 }

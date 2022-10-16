@@ -1,7 +1,7 @@
 package mybatis.mapping;
 
 import mybatis.session.Configuration;
-import mybatis.JdbcType;
+import mybatis.type.JdbcType;
 
 /**
  * @Description 参数映射 #{property,javaType=int,jdbcType=NUMERIC}

@@ -1,6 +1,7 @@
 package mybatis.type;
 
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 /**
  * @Description TODO
@@ -15,5 +16,5 @@ public interface TypeHandler<T> {
      * @param param
      * @param jdbcType
      */
-    void setParameter(PreparedStatement ps, int i, T param, JdbcType jdbcType);
+    void setParameter(PreparedStatement ps, int i, T param, JdbcType jdbcType) throws SQLException;
 }

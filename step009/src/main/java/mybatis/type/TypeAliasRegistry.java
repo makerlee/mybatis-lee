@@ -1,5 +1,7 @@
 package mybatis.type;
 
+import mybatis.io.Resources;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -29,7 +31,20 @@ public class TypeAliasRegistry {
     }
 
     public <T> Class<T> resolveAlia(String alia) {
-        String key = alia.toLowerCase(Locale.ENGLISH);
-        return (Class<T>) TYPE_ALIAS.get(key);
+        if (alia == null) {
+            return null;
+        }
+        try {
+            String key = alia.toLowerCase(Locale.ENGLISH);
+            Class<T> value;
+            if (TYPE_ALIAS.containsKey(key)) {
+                value = (Class<T>) TYPE_ALIAS.get(key);
+            } else {
+                value = (Class<T>) Resources.classForName(alia);
+            }
+            return value;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Could not resolve type alias '" + alia + "'.  Cause: " + e, e);
+        }
     }
 }

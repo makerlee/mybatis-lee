@@ -3,14 +3,22 @@ package mybatis.session;
 import java.util.HashMap;
 import java.util.Map;
 
-import mybatis.datasource.pooled.PooledDataSourceFactory;
-import mybatis.datasource.unpooled.UnPooledDataSourceFactory;
-import mybatis.type.TypeAliasRegistry;
 import mybatis.binding.MapperRegistry;
 import mybatis.datasource.druid.DruidDataSourceFactory;
+import mybatis.datasource.pooled.PooledDataSourceFactory;
+import mybatis.datasource.unpooled.UnPooledDataSourceFactory;
+import mybatis.executor.Executor;
+import mybatis.executor.SimpleExecutor;
+import mybatis.executor.resultset.DefaultResultSetHandler;
+import mybatis.executor.resultset.ResultSetHandler;
+import mybatis.executor.statement.PrepareStatementHandler;
+import mybatis.executor.statement.StatementHandler;
+import mybatis.mapping.BoundSql;
 import mybatis.mapping.Environment;
 import mybatis.mapping.MappedStatement;
+import mybatis.transaction.Transaction;
 import mybatis.transaction.jdbc.JdbcTransactionFactory;
+import mybatis.type.TypeAliasRegistry;
 
 /**
  * @Description 贯穿整个mybatis生命周期的配置
@@ -71,5 +79,27 @@ public class Configuration {
 
 	public TypeAliasRegistry getTypeAliasRegistry() {
 		return typeAliasRegistry;
+	}
+
+	/**
+	 * 执行器
+	 */
+	public Executor newExecutor(Transaction tx) {
+		return new SimpleExecutor(this, tx);
+	}
+
+	/**
+	 * 创建结果集处理器
+	 */
+	public ResultSetHandler newResultSetHandler(Executor executor, MappedStatement mappedStatement, BoundSql boundSql) {
+		return new DefaultResultSetHandler(executor, mappedStatement, boundSql);
+	}
+
+	/**
+	 * 创建语句处理器
+	 */
+	public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameter,
+			ResultHandler resultHandler, BoundSql boundSql) {
+		return new PrepareStatementHandler(executor, mappedStatement, parameter, resultHandler, boundSql);
 	}
 }

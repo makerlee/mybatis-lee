@@ -23,7 +23,7 @@ public class UnPooledDataSource implements DataSource {
     private String driver;
     private String url;
     private String username;
-    private String passwd;
+    private String password;
     private Boolean autoCommit;
     private Integer transIsolationLevel;
 
@@ -33,6 +33,16 @@ public class UnPooledDataSource implements DataSource {
             Driver tmp = drivers.nextElement();
             registeredDrivers.put(tmp.getClass().getName(), tmp);
         }
+    }
+
+    public UnPooledDataSource() {
+    }
+
+    public UnPooledDataSource(String driver, String url, String username, String passwd) {
+        this.driver = driver;
+        this.url = url;
+        this.username = username;
+        this.password = passwd;
     }
 
     /**
@@ -121,12 +131,12 @@ public class UnPooledDataSource implements DataSource {
 
     @Override
     public Connection getConnection() throws SQLException {
-        return doGetConnection(username, passwd);
+        return doGetConnection(username, password);
     }
 
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
-        return doGetConnection(username, passwd);
+        return doGetConnection(username, this.password);
     }
 
     @Override
@@ -212,12 +222,12 @@ public class UnPooledDataSource implements DataSource {
         this.username = username;
     }
 
-    public String getPasswd() {
-        return passwd;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPasswd(String passwd) {
-        this.passwd = passwd;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Boolean getAutoCommit() {

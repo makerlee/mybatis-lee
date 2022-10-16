@@ -11,8 +11,8 @@ public class MappedStatement {
 	private Configuration configuration;
 	private String id;
 	private SqlCommandType sqlCommandType;
-
-	private BoundSql boundSql;
+	private SqlSource sqlSource;
+	Class<?> resultType;
 
 	// disable
 	MappedStatement() {
@@ -21,11 +21,13 @@ public class MappedStatement {
 	public static class Builder {
 		private MappedStatement statement = new MappedStatement();
 
-		public Builder(Configuration configuration, String id, SqlCommandType commandType, BoundSql boundSql) {
+		public Builder(Configuration configuration, String id, SqlCommandType commandType, SqlSource sqlSource,
+				Class<?> resultType) {
 			statement.configuration = configuration;
 			statement.id = id;
 			statement.sqlCommandType = commandType;
-			statement.boundSql = boundSql;
+			statement.sqlSource = sqlSource;
+			statement.resultType = resultType;
 		}
 
 		public MappedStatement build() {
@@ -47,7 +49,11 @@ public class MappedStatement {
 		return sqlCommandType;
 	}
 
-	public BoundSql getBoundSql() {
-		return boundSql;
+	public SqlSource getSqlSource() {
+		return sqlSource;
+	}
+
+	public Class<?> getResultType() {
+		return resultType;
 	}
 }

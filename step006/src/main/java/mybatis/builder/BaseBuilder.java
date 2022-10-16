@@ -1,7 +1,7 @@
 package mybatis.builder;
 
 import mybatis.session.Configuration;
-import mybatis.TypeAliasRegistry;
+import mybatis.type.TypeAliasRegistry;
 
 /**
  * @Description 建造者

@@ -1,15 +1,14 @@
 package mybatis.builder.xml;
 
-import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
 
 import javax.sql.DataSource;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.xml.sax.InputSource;
@@ -17,10 +16,7 @@ import org.xml.sax.InputSource;
 import mybatis.builder.BaseBuilder;
 import mybatis.datasource.DataSourceFactory;
 import mybatis.io.Resources;
-import mybatis.mapping.BoundSql;
 import mybatis.mapping.Environment;
-import mybatis.mapping.MappedStatement;
-import mybatis.mapping.SqlCommandType;
 import mybatis.session.Configuration;
 import mybatis.transaction.TransactionFactory;
 
@@ -100,47 +96,14 @@ public class XmlConfigBuilder extends BaseBuilder {
 		}
 	}
 
-	private void mapperElement(Element mappers) throws IOException, DocumentException, ClassNotFoundException {
+	private void mapperElement(Element mappers) throws Exception {
 		List<Element> mapperList = mappers.elements("mapper");
 		for (Element mapper : mapperList) {
 			String resource = mapper.attributeValue("resource");
-			Reader reader = Resources.getResourceAsReader(resource);
-			SAXReader saxReader = new SAXReader();
-			Document document = saxReader.read(new InputSource(reader));
-			Element rootElement = document.getRootElement();
-			// 命名空间
-			String namespace = rootElement.attributeValue("namespace");
-			// select标签
-			List<Element> selectNodes = rootElement.elements("select");
-			for (Element selectNode : selectNodes) {
-				String id = selectNode.attributeValue("id");
-				String parameterType = selectNode.attributeValue("parameterType");
-				String resultType = selectNode.attributeValue("resultType");
-				String sql = selectNode.getText();
+			InputStream inputStream = Resources.getResourceAsStream(resource);
 
-				// ?配置
-				Map<Integer, String> parameter = new HashMap<>();
-				Pattern pattern = Pattern.compile("(#\\{(.*?)})");
-				Matcher matcher = pattern.matcher(sql);
-				for (int i = 1; matcher.find(); i++) {
-					String g1 = matcher.group(1);
-					String g2 = matcher.group(2);
-					parameter.put(i, g2);
-					sql = sql.replace(g1, "?");
-				}
-
-				String msId = namespace + "." + id;
-				SqlCommandType sqlCommandType = SqlCommandType
-						.valueOf(selectNode.getName().toUpperCase(Locale.ENGLISH));
-
-				BoundSql boundSql = new BoundSql(sql, parameter, parameterType, resultType);
-
-				MappedStatement mappedStatement = new MappedStatement.Builder(configuration, msId, sqlCommandType,
-						boundSql).build();
-
-				configuration.addMappedStatement(mappedStatement);
-			}
-			configuration.addMapper(Resources.classForName(namespace));
+			XmlMapperBuilder builder = new XmlMapperBuilder(inputStream, configuration, resource);
+			builder.parse();
 		}
 	}
 }

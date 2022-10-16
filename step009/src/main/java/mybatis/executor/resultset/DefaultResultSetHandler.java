@@ -17,16 +17,18 @@ import mybatis.mapping.MappedStatement;
  **/
 public class DefaultResultSetHandler implements ResultSetHandler {
 	private final BoundSql boundSql;
+	private MappedStatement ms;
 
 	public DefaultResultSetHandler(Executor executor, MappedStatement ms, BoundSql boundSql) {
 		this.boundSql = boundSql;
+		this.ms = ms;
 	}
 
 	@Override
 	public <E> List<E> handleResultSet(Statement statement) throws SQLException {
 		ResultSet resultSet = statement.getResultSet();
 		try {
-			return resultSetToObject(resultSet, Class.forName(boundSql.getResultType()));
+			return resultSetToObject(resultSet, ms.getResultType());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

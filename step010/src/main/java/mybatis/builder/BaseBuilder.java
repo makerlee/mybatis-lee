@@ -2,6 +2,7 @@ package mybatis.builder;
 
 import mybatis.session.Configuration;
 import mybatis.type.TypeAliasRegistry;
+import mybatis.type.TypeHandlerRegistry;
 
 /**
  * @Description 建造者
@@ -11,10 +12,12 @@ import mybatis.type.TypeAliasRegistry;
 public class BaseBuilder {
 	protected final Configuration configuration;
 	protected final TypeAliasRegistry typeAliasRegistry;
+	protected final TypeHandlerRegistry typeHandlerRegistry;
 
 	public BaseBuilder(Configuration configuration) {
 		this.configuration = configuration;
 		this.typeAliasRegistry = this.configuration.getTypeAliasRegistry();
+		this.typeHandlerRegistry = this.configuration.getTypeHandlerRegistry();
 	}
 
 	public Configuration getConfiguration() {

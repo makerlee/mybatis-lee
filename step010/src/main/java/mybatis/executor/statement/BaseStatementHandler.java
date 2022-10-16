@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import mybatis.executor.Executor;
+import mybatis.executor.parameter.ParameterHandler;
 import mybatis.executor.resultset.ResultSetHandler;
 import mybatis.mapping.BoundSql;
 import mybatis.mapping.MappedStatement;
@@ -23,6 +24,7 @@ public abstract class BaseStatementHandler implements StatementHandler {
 
 	protected final Object paramObject;
 	protected final ResultSetHandler resultSetHandler;
+	protected final ParameterHandler parameterHandler;
 
 	protected final BoundSql boundSql;
 
@@ -31,9 +33,11 @@ public abstract class BaseStatementHandler implements StatementHandler {
 		this.configuration = mappedStatement.getConfiguration();
 		this.executor = executor;
 		this.mappedStatement = mappedStatement;
-		this.paramObject = paramObject;
-		this.resultSetHandler = configuration.newResultSetHandler(executor, mappedStatement, boundSql);
 		this.boundSql = boundSql;
+
+		this.paramObject = paramObject;
+		this.parameterHandler = configuration.newParameterHandler(mappedStatement, paramObject, boundSql);
+		this.resultSetHandler = configuration.newResultSetHandler(executor, mappedStatement, boundSql);
 	}
 
 	@Override

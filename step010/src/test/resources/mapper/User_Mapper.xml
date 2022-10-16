@@ -5,7 +5,13 @@
     <select id="queryUserInfoById" parameterType="java.lang.Integer" resultType="mybatis.po.User">
         SELECT id, userId, userName, userHead
         FROM t_user
-        where id = #{id}
+        where id = #{id, javaType = int}
     </select>
 
+
+    <select id="queryUserInfo" parameterType="mybatis.po.User" resultType="mybatis.po.User">
+        SELECT id, userId, userName, userHead
+        FROM t_user
+        where id = #{id} and userId = #{userId}
+    </select>
 </mapper>

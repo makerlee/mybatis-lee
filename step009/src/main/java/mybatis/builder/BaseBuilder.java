@@ -20,4 +20,8 @@ public class BaseBuilder {
 	public Configuration getConfiguration() {
 		return configuration;
 	}
+
+	protected Class<?> resolveAlias(String alias) {
+		return typeAliasRegistry.resolveAlia(alias);
+	}
 }
