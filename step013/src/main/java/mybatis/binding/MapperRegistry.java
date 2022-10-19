@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import cn.hutool.core.lang.ClassScanner;
+import mybatis.builder.annotation.MapperAnnotationBuilder;
 import mybatis.session.Configuration;
 import mybatis.session.SqlSession;
 
@@ -28,10 +29,6 @@ public class MapperRegistry {
 	 */
 	private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<>();
 
-	public Map<Class<?>, MapperProxyFactory<?>> getKnownMappers() {
-		return knownMappers;
-	}
-
 	public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
 		MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
 		if (mapperProxyFactory == null) {
@@ -49,6 +46,10 @@ public class MapperRegistry {
 			throw new RuntimeException("Type " + mapper + "is already known to the MapperRegistry.");
 		}
 		knownMappers.put(mapper, new MapperProxyFactory<>(mapper));
+
+		// 解析注解sql
+		MapperAnnotationBuilder builder = new MapperAnnotationBuilder(configuration, mapper);
+		builder.parse();
 	}
 
 	public <T> boolean hasMapper(Class<T> type) {

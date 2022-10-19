@@ -30,8 +30,8 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
 			Environment environment = configuration.getEnvironment();
 			final TransactionFactory transactionFactory = environment.getTransactionFactory();
 			tx = transactionFactory.newTransaction(environment.getDataSource(),
-					TransactionIsolationLevel.REPEATABLE_READ, false);
-            Executor executor = configuration.newExecutor(tx);
+					TransactionIsolationLevel.READ_COMMITTED, false);
+			Executor executor = configuration.newExecutor(tx);
 			return new DefaultSqlSession(configuration, executor);
 		} catch (Exception e) {
 			if (tx != null) {

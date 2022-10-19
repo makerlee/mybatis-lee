@@ -5,6 +5,7 @@ import java.util.List;
 import mybatis.executor.Executor;
 import mybatis.mapping.MappedStatement;
 import mybatis.session.Configuration;
+import mybatis.session.RowBounds;
 import mybatis.session.SqlSession;
 
 /**
@@ -31,7 +32,7 @@ public class DefaultSqlSession implements SqlSession {
 	public <T> T selectOne(String statementId, Object parameter) {
 		try {
 			MappedStatement ms = configuration.getStatement(statementId);
-			List<T> result = executor.query(ms, parameter, Executor.NO_RESULT_HANDLER,
+			List<T> result = executor.query(ms, parameter, RowBounds.DEFAULT, Executor.NO_RESULT_HANDLER,
 					ms.getSqlSource().getBoundSql(parameter));
 			return result.get(0);
 		} catch (Exception e) {

@@ -3,7 +3,10 @@ package mybatis.builder;
 import java.util.ArrayList;
 import java.util.List;
 
-import mybatis.mapping.*;
+import mybatis.mapping.MappedStatement;
+import mybatis.mapping.ResultMap;
+import mybatis.mapping.SqlCommandType;
+import mybatis.mapping.SqlSource;
 import mybatis.scripting.LanguageDriver;
 import mybatis.session.Configuration;
 
@@ -36,13 +39,6 @@ public class MapperBuilderAssistant extends BaseBuilder {
 		if (isReference) {
 			if (id.contains(".")) {
 				return id;
-			} else {
-				if (id.startsWith(currentNamespace + ".")) {
-					return id;
-				}
-				if (id.contains(".")) {
-					throw new RuntimeException("Dots are not allowed in element names, please remove it from " + id);
-				}
 			}
 		}
 		return currentNamespace + "." + id;
@@ -69,17 +65,8 @@ public class MapperBuilderAssistant extends BaseBuilder {
 		List<ResultMap> resultMaps = new ArrayList<>();
 		resultMap = applyCurrentNamespace(resultMap, true);
 		if (resultMap != null) {
-			String[] resultMapNames = resultMap.split(",");
-			for (String resultMapName : resultMapNames) {
-				resultMaps.add(configuration.getResultMap(resultMapName.trim()));
-			}
-		}
-		/*
-		 * 通常使用 resultType 即可满足大部分场景 <select id="queryUserInfoById"
-		 * resultType="cn.xxx.mybatis.test.po.User"> 使用 resultType 的情况下，Mybatis
-		 * 会自动创建一个 ResultMap，基于属性名称映射列到 JavaBean 的属性上。
-		 */
-		else if (resultType != null) {
+
+		} else if (resultType != null) {
 			ResultMap.Builder resultMapBuilder = new ResultMap.Builder(configuration, builder.id() + "-Inline",
 					resultType, new ArrayList<>());
 			resultMaps.add(resultMapBuilder.build());
@@ -87,10 +74,4 @@ public class MapperBuilderAssistant extends BaseBuilder {
 		builder.resultMaps(resultMaps);
 	}
 
-	public ResultMap addResultMap(String rmId, Class<?> returnType, List<ResultMapping> resultMappings) {
-		ResultMap.Builder inlineBuilder = new ResultMap.Builder(configuration, rmId, returnType, resultMappings);
-		ResultMap resultMap = inlineBuilder.build();
-		configuration.addResultMap(resultMap);
-		return resultMap;
-	}
 }

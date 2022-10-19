@@ -6,5 +6,8 @@ package mybatis.session;
  * @Date 2022/9/23 21:04
  **/
 public interface ResultHandler {
-    void handleResult();
+    /**
+     * 处理结果
+     */
+    void handleResult(ResultContext context);
 }

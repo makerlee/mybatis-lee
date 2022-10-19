@@ -10,6 +10,7 @@ import mybatis.executor.Executor;
 import mybatis.mapping.BoundSql;
 import mybatis.mapping.MappedStatement;
 import mybatis.session.ResultHandler;
+import mybatis.session.RowBounds;
 
 /**
  * @Description 预处理语句处理器(prepareStatement)
@@ -19,8 +20,8 @@ import mybatis.session.ResultHandler;
 public class PrepareStatementHandler extends BaseStatementHandler {
 
 	public PrepareStatementHandler(Executor executor, MappedStatement mappedStatement, Object paramObject,
-			ResultHandler resultHandler, BoundSql boundSql) {
-		super(executor, mappedStatement, paramObject, resultHandler, boundSql);
+			RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
+		super(executor, mappedStatement, paramObject, rowBounds, resultHandler, boundSql);
 	}
 
 	@Override

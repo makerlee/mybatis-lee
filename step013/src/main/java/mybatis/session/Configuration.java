@@ -19,6 +19,7 @@ import mybatis.executor.statement.StatementHandler;
 import mybatis.mapping.BoundSql;
 import mybatis.mapping.Environment;
 import mybatis.mapping.MappedStatement;
+import mybatis.mapping.ResultMap;
 import mybatis.reflection.MetaObject;
 import mybatis.reflection.factory.DefaultObjectFactory;
 import mybatis.reflection.factory.ObjectFactory;
@@ -46,6 +47,8 @@ public class Configuration {
 
 	// 映射语句:key是接口方法的全路径名
 	protected final Map<String, MappedStatement> mappedStatements = new HashMap<>();
+	// 结果映射，存在Map里
+	protected final Map<String, ResultMap> resultMaps = new HashMap<>();
 
 	// 类型别名注册器
 	protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
@@ -167,5 +170,13 @@ public class Configuration {
 
 	public ObjectFactory getObjectFactory() {
 		return objectFactory;
+	}
+
+	public void addResultMap(ResultMap resultMap) {
+		resultMaps.put(resultMap.getId(), resultMap);
+	}
+
+	public ResultMap getResultMap(String id) {
+		return resultMaps.get(id);
 	}
 }

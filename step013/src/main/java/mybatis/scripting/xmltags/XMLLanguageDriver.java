@@ -1,5 +1,7 @@
 package mybatis.scripting.xmltags;
 
+import mybatis.builder.StaticSqlSource;
+import mybatis.scripting.defaults.RawSqlSource;
 import org.dom4j.Element;
 
 import mybatis.executor.parameter.ParameterHandler;
@@ -21,6 +23,12 @@ public class XMLLanguageDriver implements LanguageDriver {
     public SqlSource createSqlSource(Configuration configuration, Element script, Class<?> paramType) {
         XMLScriptBuilder scriptBuilder = new XMLScriptBuilder(configuration, script, paramType);
         return scriptBuilder.parseScriptNode();
+    }
+
+    @Override
+    public SqlSource createSqlSource(Configuration configuration, String script, Class<?> paramType) {
+        // 暂时不解析动态sql
+        return new RawSqlSource(configuration, script, paramType);
     }
 
     @Override

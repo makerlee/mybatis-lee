@@ -117,16 +117,17 @@ public class Configuration {
 	/**
 	 * 创建结果集处理器
 	 */
-	public ResultSetHandler newResultSetHandler(Executor executor, MappedStatement mappedStatement, BoundSql boundSql) {
-		return new DefaultResultSetHandler(executor, mappedStatement, boundSql);
+	public ResultSetHandler newResultSetHandler(Executor executor, MappedStatement mappedStatement, RowBounds rowBounds,
+			ResultHandler resultHandler, BoundSql boundSql) {
+		return new DefaultResultSetHandler(executor, mappedStatement, resultHandler, rowBounds, boundSql);
 	}
 
 	/**
 	 * 创建语句处理器
 	 */
 	public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameter,
-			ResultHandler resultHandler, BoundSql boundSql) {
-		return new PrepareStatementHandler(executor, mappedStatement, parameter, resultHandler, boundSql);
+			RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
+		return new PrepareStatementHandler(executor, mappedStatement, parameter, rowBounds, resultHandler, boundSql);
 	}
 
 	public boolean isResourceLoaded(String resource) {
@@ -162,5 +163,9 @@ public class Configuration {
 
 	public LanguageDriver getDefaultScriptingLangInstance() {
 		return languageRegistry.getDefaultDriver();
+	}
+
+	public ObjectFactory getObjectFactory() {
+		return objectFactory;
 	}
 }

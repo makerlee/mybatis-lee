@@ -17,6 +17,8 @@ import mybatis.transaction.Transaction;
 public interface Executor {
 	ResultHandler NO_RESULT_HANDLER = null;
 
+	int update(MappedStatement ms, Object parameter) throws SQLException;
+
 	<E> List<E> query(MappedStatement ms, Object param, RowBounds rowBounds, ResultHandler resultHandler,
 			BoundSql boundSql);
 

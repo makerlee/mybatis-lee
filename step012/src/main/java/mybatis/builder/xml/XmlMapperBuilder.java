@@ -23,9 +23,10 @@ public class XmlMapperBuilder extends BaseBuilder {
 	private String resource;
 	private MapperBuilderAssistant assistant;
 
-	public XmlMapperBuilder(InputStream inputStream, Configuration configuration, String resource) throws DocumentException {
-        this(new SAXReader().read(inputStream), configuration, resource);
-    }
+	public XmlMapperBuilder(InputStream inputStream, Configuration configuration, String resource)
+			throws DocumentException {
+		this(new SAXReader().read(inputStream), configuration, resource);
+	}
 
 	private XmlMapperBuilder(Document document, Configuration configuration, String resource) {
 		super(configuration);
@@ -34,40 +35,44 @@ public class XmlMapperBuilder extends BaseBuilder {
 		this.assistant = new MapperBuilderAssistant(configuration, resource);
 	}
 
-    /**
-     * 解析
-     */
-    public void parse() throws Exception {
-        if (!configuration.isResourceLoaded(resource)) {
+	/**
+	 * 解析
+	 */
+	public void parse() throws Exception {
+		if (!configuration.isResourceLoaded(resource)) {
 			configurationElement(element);
 			// 标记已加载
 			configuration.addLoadedResource(resource);
 			// 绑定到namespace
 			configuration.addMapper(Resources.classForName(assistant.getCurrentNamespace()));
-        }
-    }
+		}
+	}
 
 	// 配置mapper元素
 	// <mapper namespace="org.mybatis.example.BlogMapper">
-	//   <select id="selectBlog" parameterType="int" resultType="Blog">
-	//    select * from Blog where id = #{id}
-	//   </select>
+	// <select id="selectBlog" parameterType="int" resultType="Blog">
+	// select * from Blog where id = #{id}
+	// </select>
 	// </mapper>
 	private void configurationElement(Element element) {
-    	String currentNamespace = element.attributeValue("namespace");
-    	if (currentNamespace == null || "".equals(currentNamespace)) {
+		String currentNamespace = element.attributeValue("namespace");
+		if (currentNamespace == null || "".equals(currentNamespace)) {
 			throw new RuntimeException("Mapper's namespace cannot be empty.");
 		}
-    	assistant.setCurrentNamespace(currentNamespace);
+		// 设置namespace
+		assistant.setCurrentNamespace(currentNamespace);
 
-    	// 解析select insert update delete
-		buildStatementFromContext(element.elements("select"));
+		// 解析select insert update delete
+		buildStatementFromContext(element.elements("select"), element.elements("insert"), element.elements("update"),
+				element.elements("delete"));
 	}
 
-	private void buildStatementFromContext(List<Element> elements) {
-		for (Element element : elements) {
-			XmlStatementBuilder builder = new XmlStatementBuilder(configuration, element, assistant);
-			builder.parseStatementNode();
+	private void buildStatementFromContext(List<Element>... diffTypeElements) {
+		for (List<Element> elementList : diffTypeElements) {
+			for (Element element : elementList) {
+				XmlStatementBuilder builder = new XmlStatementBuilder(configuration, element, assistant);
+				builder.parseStatementNode();
+			}
 		}
 	}
 }

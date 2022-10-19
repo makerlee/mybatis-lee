@@ -6,6 +6,7 @@ import java.util.List;
 import mybatis.mapping.BoundSql;
 import mybatis.mapping.MappedStatement;
 import mybatis.session.ResultHandler;
+import mybatis.session.RowBounds;
 import mybatis.transaction.Transaction;
 
 /**
@@ -16,7 +17,8 @@ import mybatis.transaction.Transaction;
 public interface Executor {
 	ResultHandler NO_RESULT_HANDLER = null;
 
-	<E> List<E> query(MappedStatement mappedStatement, Object param, ResultHandler resultHandler, BoundSql boundSql);
+	<E> List<E> query(MappedStatement ms, Object param, RowBounds rowBounds, ResultHandler resultHandler,
+			BoundSql boundSql);
 
 	Transaction getTransaction();
 

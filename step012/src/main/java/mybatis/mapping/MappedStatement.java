@@ -27,7 +27,11 @@ public class MappedStatement {
 		return resultMaps;
 	}
 
-	public static class Builder {
+    public BoundSql getBoundSql(Object paramObject) {
+		return sqlSource.getBoundSql(paramObject);
+    }
+
+    public static class Builder {
 		private MappedStatement statement = new MappedStatement();
 
 		public Builder(Configuration configuration, String id, SqlCommandType commandType, SqlSource sqlSource,

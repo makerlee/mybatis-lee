@@ -24,7 +24,7 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
 	@Override
 	public <T> T create(Class<T> type, List<Class<?>> constructorArgsType, List<Object> constructorArgs) {
 		Class<?> classToCreate = resolveInterface(type);
-		return (T) instantiateClass(type, constructorArgsType, constructorArgs);
+		return (T) instantiateClass(classToCreate, constructorArgsType, constructorArgs);
 	}
 
 	private <T> Object instantiateClass(Class<T> type, List<Class<?>> constructorArgsType,

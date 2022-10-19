@@ -11,6 +11,7 @@ import mybatis.mapping.BoundSql;
 import mybatis.mapping.MappedStatement;
 import mybatis.session.Configuration;
 import mybatis.session.ResultHandler;
+import mybatis.session.RowBounds;
 
 /**
  * @Description 基类
@@ -26,18 +27,21 @@ public abstract class BaseStatementHandler implements StatementHandler {
 	protected final ResultSetHandler resultSetHandler;
 	protected final ParameterHandler parameterHandler;
 
-	protected final BoundSql boundSql;
+	protected final RowBounds rowBounds;
+	protected BoundSql boundSql;
 
 	public BaseStatementHandler(Executor executor, MappedStatement mappedStatement, Object paramObject,
-			ResultHandler resultHandler, BoundSql boundSql) {
+			RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
 		this.configuration = mappedStatement.getConfiguration();
 		this.executor = executor;
 		this.mappedStatement = mappedStatement;
 		this.boundSql = boundSql;
+		this.rowBounds = rowBounds;
 
 		this.paramObject = paramObject;
 		this.parameterHandler = configuration.newParameterHandler(mappedStatement, paramObject, boundSql);
-		this.resultSetHandler = configuration.newResultSetHandler(executor, mappedStatement, boundSql);
+		this.resultSetHandler = configuration.newResultSetHandler(executor, mappedStatement, rowBounds, resultHandler,
+				boundSql);
 	}
 
 	@Override

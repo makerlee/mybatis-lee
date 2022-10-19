@@ -1,6 +1,7 @@
 package mybatis.executor;
 
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -34,6 +35,11 @@ public abstract class BaseExecutor implements Executor {
 	}
 
 	@Override
+	public int update(MappedStatement ms, Object parameter) throws SQLException {
+		return doUpdate(ms, parameter);
+	}
+
+	@Override
 	public <E> List<E> query(MappedStatement ms, Object param, RowBounds rowBounds, ResultHandler resultHandler,
 			BoundSql boundSql) {
 		if (closed) {
@@ -41,6 +47,9 @@ public abstract class BaseExecutor implements Executor {
 		}
 		return doQuery(ms, param, rowBounds, resultHandler, boundSql);
 	}
+
+	// 子类实现
+	protected abstract int doUpdate(MappedStatement ms, Object parameter) throws SQLException;
 
 	// 子类实现
 	protected abstract <E> List<E> doQuery(MappedStatement ms, Object param, RowBounds rowBounds,
@@ -84,6 +93,15 @@ public abstract class BaseExecutor implements Executor {
 		} finally {
 			transaction = null;
 			closed = true;
+		}
+	}
+
+	protected void closeStatement(Statement statement) {
+		if (statement != null) {
+			try {
+				statement.close();
+			} catch (SQLException ignore) {
+			}
 		}
 	}
 }

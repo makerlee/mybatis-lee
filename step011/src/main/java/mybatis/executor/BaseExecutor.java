@@ -10,6 +10,7 @@ import mybatis.mapping.BoundSql;
 import mybatis.mapping.MappedStatement;
 import mybatis.session.Configuration;
 import mybatis.session.ResultHandler;
+import mybatis.session.RowBounds;
 import mybatis.transaction.Transaction;
 
 /**
@@ -33,16 +34,17 @@ public abstract class BaseExecutor implements Executor {
 	}
 
 	@Override
-	public <E> List<E> query(MappedStatement ms, Object param, ResultHandler resultHandler, BoundSql boundSql) {
+	public <E> List<E> query(MappedStatement ms, Object param, RowBounds rowBounds, ResultHandler resultHandler,
+			BoundSql boundSql) {
 		if (closed) {
 			throw new RuntimeException("Executor was closed.");
 		}
-		return doQuery(ms, param, resultHandler, boundSql);
+		return doQuery(ms, param, rowBounds, resultHandler, boundSql);
 	}
 
 	// 子类实现
-	protected abstract <E> List<E> doQuery(MappedStatement ms, Object param, ResultHandler resultHandler,
-			BoundSql boundSql);
+	protected abstract <E> List<E> doQuery(MappedStatement ms, Object param, RowBounds rowBounds,
+			ResultHandler resultHandler, BoundSql boundSql);
 
 	@Override
 	public Transaction getTransaction() {

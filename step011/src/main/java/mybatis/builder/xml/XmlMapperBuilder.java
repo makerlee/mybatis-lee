@@ -3,6 +3,7 @@ package mybatis.builder.xml;
 import java.io.InputStream;
 import java.util.List;
 
+import mybatis.builder.MapperBuilderAssistant;
 import mybatis.io.Resources;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -20,7 +21,7 @@ import mybatis.session.Configuration;
 public class XmlMapperBuilder extends BaseBuilder {
 	private Element element;
 	private String resource;
-	private String currentNamespace;
+	private MapperBuilderAssistant assistant;
 
 	public XmlMapperBuilder(InputStream inputStream, Configuration configuration, String resource) throws DocumentException {
         this(new SAXReader().read(inputStream), configuration, resource);
@@ -30,6 +31,7 @@ public class XmlMapperBuilder extends BaseBuilder {
 		super(configuration);
 		this.element = document.getRootElement();
 		this.resource = resource;
+		this.assistant = new MapperBuilderAssistant(configuration, resource);
 	}
 
     /**
@@ -41,7 +43,7 @@ public class XmlMapperBuilder extends BaseBuilder {
 			// 标记已加载
 			configuration.addLoadedResource(resource);
 			// 绑定到namespace
-			configuration.addMapper(Resources.classForName(currentNamespace));
+			configuration.addMapper(Resources.classForName(assistant.getCurrentNamespace()));
         }
     }
 
@@ -52,10 +54,11 @@ public class XmlMapperBuilder extends BaseBuilder {
 	//   </select>
 	// </mapper>
 	private void configurationElement(Element element) {
-    	currentNamespace = element.attributeValue("namespace");
+    	String currentNamespace = element.attributeValue("namespace");
     	if (currentNamespace == null || "".equals(currentNamespace)) {
 			throw new RuntimeException("Mapper's namespace cannot be empty.");
 		}
+    	assistant.setCurrentNamespace(currentNamespace);
 
     	// 解析select insert update delete
 		buildStatementFromContext(element.elements("select"));
@@ -63,7 +66,7 @@ public class XmlMapperBuilder extends BaseBuilder {
 
 	private void buildStatementFromContext(List<Element> elements) {
 		for (Element element : elements) {
-			XmlStatementBuilder builder = new XmlStatementBuilder(configuration, element, currentNamespace);
+			XmlStatementBuilder builder = new XmlStatementBuilder(configuration, element, assistant);
 			builder.parseStatementNode();
 		}
 	}

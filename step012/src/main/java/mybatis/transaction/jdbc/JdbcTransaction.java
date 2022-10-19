@@ -31,7 +31,7 @@ public class JdbcTransaction implements Transaction {
 
     @Override
     public Connection getConnection() throws SQLException {
-        Connection connection = dataSource.getConnection();
+        connection = dataSource.getConnection();
         connection.setTransactionIsolation(isolationLevel.getLevel());
         connection.setAutoCommit(autoCommit);
         return connection;

@@ -15,7 +15,10 @@ import mybatis.session.Configuration;
  **/
 public interface LanguageDriver {
 
-    SqlSource createSqlSource(Configuration configuration, Element script, Class<?> paramType);
+	SqlSource createSqlSource(Configuration configuration, Element script, Class<?> paramType);
 
-    ParameterHandler createParameterHandler(MappedStatement ms, Object paramObject, BoundSql boundSql);
+	// 创建SQL源码：注解方式
+	SqlSource createSqlSource(Configuration configuration, String script, Class<?> paramType);
+
+	ParameterHandler createParameterHandler(MappedStatement ms, Object paramObject, BoundSql boundSql);
 }

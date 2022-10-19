@@ -31,16 +31,19 @@ public class ApiTest {
     }
 
     @Test
-    public void test_queryByObject() throws IOException {
+    public void test_insertUser_success() throws IOException {
+        User user = new User();
+        user.setUserId("004");
+        user.setUserName("yee");
+        user.setUserHead("ta.jpg");
+
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder()
                 .build(Resources.getResourceAsReader("mybatis-config.xml"));
         SqlSession sqlSession = sqlSessionFactory.openSession();
 
         IUserMapper mapper = sqlSession.getMapper(IUserMapper.class);
-        User user = new User();
-        user.setId(1);
-        user.setUserId("001");
-        User result = mapper.queryUserInfo(user);
-        System.out.println(JSON.toJSONString(result));
+        mapper.insertUserInfo(user);
+
+        sqlSession.commit();
     }
 }

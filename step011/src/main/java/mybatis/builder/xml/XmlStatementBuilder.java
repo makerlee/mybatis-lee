@@ -5,7 +5,7 @@ import java.util.Locale;
 import org.dom4j.Element;
 
 import mybatis.builder.BaseBuilder;
-import mybatis.mapping.MappedStatement;
+import mybatis.builder.MapperBuilderAssistant;
 import mybatis.mapping.SqlCommandType;
 import mybatis.mapping.SqlSource;
 import mybatis.scripting.LanguageDriver;
@@ -17,13 +17,13 @@ import mybatis.session.Configuration;
  * @Date 2022/10/10 10:48
  **/
 public class XmlStatementBuilder extends BaseBuilder {
-	private String currentNamespace;
+	private MapperBuilderAssistant assistant;
 	private Element element;
 
-	public XmlStatementBuilder(Configuration configuration, Element element, String namespace) {
+	public XmlStatementBuilder(Configuration configuration, Element element, MapperBuilderAssistant builderAssistant) {
 		super(configuration);
 		this.element = element;
-		this.currentNamespace = namespace;
+		this.assistant = builderAssistant;
 	}
 
 	// <select
@@ -45,6 +45,8 @@ public class XmlStatementBuilder extends BaseBuilder {
 		// 参数类型
 		String paramType = element.attributeValue("parameterType");
 		Class<?> paramTypeClass = resolveAlias(paramType);
+
+		String resultMap = element.attributeValue("resultMap");
 		// 返回值类型
 		String resultType = element.attributeValue("resultType");
 		Class<?> resultTypeClazz = resolveAlias(resultType);
@@ -55,11 +57,12 @@ public class XmlStatementBuilder extends BaseBuilder {
 		// 获取默认语言驱动器
 		Class<?> langClass = configuration.getLanguageRegistry().getDefaultDriverClass();
 		LanguageDriver languageDriver = configuration.getLanguageRegistry().getDriver(langClass);
+
+		// 解析成sqlSource, DynamicSqlSource/RawSqlSource
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, element, paramTypeClass);
 
-		MappedStatement ms = new MappedStatement.Builder(configuration, currentNamespace + "." + id, sqlCommandType,
-				sqlSource, resultTypeClazz).build();
-
-		configuration.addMappedStatement(ms);
+		// 调用本节新增类
+		assistant.addMappedStatement(id, sqlSource, sqlCommandType, paramTypeClass, resultMap, resultTypeClazz,
+				languageDriver);
 	}
 }

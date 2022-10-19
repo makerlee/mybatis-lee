@@ -3,6 +3,8 @@ package mybatis.mapping;
 import mybatis.scripting.LanguageDriver;
 import mybatis.session.Configuration;
 
+import java.util.List;
+
 /**
  * @Description 映射语句类
  * @Author jiyang.li
@@ -15,9 +17,14 @@ public class MappedStatement {
 	private SqlSource sqlSource;
 	Class<?> resultType;
 	private LanguageDriver lang;
+	private List<ResultMap> resultMaps;
 
 	// disable
 	MappedStatement() {
+	}
+
+	public List<ResultMap> getResultMaps() {
+		return resultMaps;
 	}
 
 	public static class Builder {
@@ -37,6 +44,15 @@ public class MappedStatement {
 			assert statement.configuration != null;
 			assert statement.id != null;
 			return statement;
+		}
+
+		public String id() {
+			return statement.getId();
+		}
+
+		public Builder resultMaps(List<ResultMap> resultMaps) {
+			statement.resultMaps = resultMaps;
+			return this;
 		}
 	}
 

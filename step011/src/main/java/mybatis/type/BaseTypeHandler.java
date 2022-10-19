@@ -3,6 +3,7 @@ package mybatis.type;
 import mybatis.session.Configuration;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -21,6 +22,13 @@ public abstract class BaseTypeHandler<T> implements TypeHandler<T> {
     public void setParameter(PreparedStatement ps, int i, T param, JdbcType jdbcType) throws SQLException {
         setNullParameter(ps, i, param, jdbcType);
     }
+
+    @Override
+    public T getResult(ResultSet resultSet, String colName) throws SQLException {
+        return getNullableResult(resultSet, colName);
+    }
+
+    protected abstract T getNullableResult(ResultSet resultSet, String colName) throws SQLException;
 
     protected abstract void setNullParameter(PreparedStatement ps, int i, T param, JdbcType jdbcType) throws SQLException;
 }

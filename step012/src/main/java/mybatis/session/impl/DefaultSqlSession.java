@@ -1,5 +1,6 @@
 package mybatis.session.impl;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import mybatis.executor.Executor;
@@ -42,8 +43,38 @@ public class DefaultSqlSession implements SqlSession {
 	}
 
 	@Override
+	public int insert(String statement, Object parameter) {
+		// 在mybatis中，insert调用的是update
+		return update(statement, parameter);
+	}
+
+	@Override
+	public int update(String statement, Object parameter) {
+		MappedStatement ms = configuration.getStatement(statement);
+		try {
+			return executor.update(ms, parameter);
+		} catch (SQLException e) {
+			throw new RuntimeException("Error updating database. Cause:" + e);
+		}
+	}
+
+	@Override
+	public Object delete(String statement, Object parameter) {
+		return update(statement, parameter);
+	}
+
+	@Override
 	public <T> T getMapper(Class<T> type) {
 		return configuration.getMapper(type, this);
+	}
+
+	@Override
+	public void commit() {
+		try {
+			executor.commit(true);
+		} catch (SQLException e) {
+			throw new RuntimeException("Error committing transaction.  Cause: " + e);
+		}
 	}
 
 	@Override
